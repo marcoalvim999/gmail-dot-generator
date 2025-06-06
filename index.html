@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gmail Dot Variations Generator</title>
+  <link rel="icon" href="https://i.pinimg.com/originals/30/2b/df/302bdf53ac8fb5022480fd2fe37f1904.gif">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3498db">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Dot Generator">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://mir-s3-cdn-cf.behance.net/project_modules/fs/9bc27292880429.5e569ff84e4d0.gif') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0; padding: 0;
+      display: flex; justify-content: center; align-items: center;
+      height: 100vh; color: #fff; text-align: center;
+    }
+    .container {
+      background: rgba(255,255,255,0.8); border-radius: 15px; box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      max-width: 450px; padding: 40px; width: 100%; backdrop-filter: blur(15px);
+    }
+    h1 { color: #2c3e50; margin-bottom: 20px; font-size: 28px; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.1); }
+    input, button {
+      padding: 15px 20px; font-size: 18px; border-radius: 10px; border: 1px solid #3498db;
+      margin: 15px 0; width: 100%; transition: all 0.3s ease;
+    }
+    input:focus, button:focus {
+      outline: none; border-color: #2980b9; box-shadow: 0 0 10px rgba(52,152,219,0.6);
+    }
+    button { background-color: #3498db; color: white; cursor: pointer; font-weight: bold; }
+    button:hover { background-color: #2980b9; transform: translateY(-2px); }
+    .results {
+      margin-top: 20px; padding: 20px; background-color: #ecf0f1;
+      border-radius: 10px; color: #34495e; text-align: left;
+      max-height: 300px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); opacity: 0;
+      animation: fadeIn 1s forwards;
+    }
+    .results span { display: block; margin-bottom: 8px; color: #2c3e50; font-size: 16px; word-wrap: break-word; }
+    .count { margin-top: 15px; font-weight: 700; font-size: 18px; color: #2c3e50; }
+    .alert { color: #e74c3c; margin-top: 15px; font-size: 16px; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .credit { margin-top: 30px; font-size: 14px; color: #34495e; text-align: center; }
+    .credit a { color: #3498db; text-decoration: none; font-weight: bold; }
+    .credit a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Gerador de Variações de Pontos</h1>
+    <input type="text" id="email" placeholder="Endereço de Email">
+    <button onclick="generateVariations()">Gerar Variações</button>
+    <div id="alert" class="alert"></div>
+    <div class="results" id="results"></div>
+    <div class="count" id="count"></div>
+    <div class="credit">&copy; 2025 <a href="https://x.com/marcoalvim999" target="_blank">By: Marco Antonio Avim</a></div>
+  </div>
+  <script>
+    function generateVariations() {
+      const email = document.getElementById('email').value.trim();
+      const alertBox = document.getElementById('alert');
+      const resultsDiv = document.getElementById('results');
+      const countDiv = document.getElementById('count');
+      alertBox.innerHTML = '';
+      resultsDiv.innerHTML = '';
+      countDiv.innerHTML = '';
+      if (!email || !email.includes('@gmail.com')) {
+        alertBox.innerHTML = 'Por favor, insira um endereço válido do Gmail Porra!';
+        return;
+      }
+      const localPart = email.split('@')[0];
+      const domainPart = email.split('@')[1];
+      let variations = getDotVariations(localPart).map(varEmail => varEmail + '@' + domainPart);
+      resultsDiv.innerHTML = variations.map(variation => `<span>${variation}</span>`).join('');
+      countDiv.innerHTML = 'Total Variations: ' + variations.length;
+    }
+    function getDotVariations(str) {
+      let results = [];
+      const recurse = (startIndex, currentStr) => {
+        if (startIndex === str.length) {
+          results.push(currentStr);
+          return;
+        }
+        recurse(startIndex + 1, currentStr + str[startIndex]);
+        recurse(startIndex + 1, currentStr + '.' + str[startIndex]);
+      };
+      recurse(1, str[0]);
+      return results;
+    }
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      console.log("✅ App pode ser instalado - evento capturado.");
+    });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log("✅ Service Worker registrado"))
+        .catch((err) => console.error("❌ Falha ao registrar SW:", err));
+    }
+  </script>
+</body>
+</html>
